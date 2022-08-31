@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+>
+
+
+<h:head>
+    <style type="text/css">
+        .block {
+            float: left;
+        }
+
+    </style>
+</h:head>
+
+<h:body style="text-align: center">
+
+    <h:form>
+        <p:growl id="growl" showDetail="true"/>
+
+        <div style="border:2px solid black;">
+
+            <h:panelGrid columns="1" border="1"
+                         cellpadding="10" cellspacing="1">
+                <f:facet name="header">
+                    <h:outputText value="Анализируемая ссылка"/>
+                </f:facet>
+                <p:inputText id="inputTextId" value="#{linkController.input}">
+                    <p:autoUpdate />
+                    <p:ajax event="blur" update="growl analise-button"
+                            listener="#{linkController.onBlurEvent}"/>
+                </p:inputText>
+                <p:commandButton value="Анализировать" id="analise-button" disabled="#{linkController.analiseButton}"
+                                 onstart="PF('dlg').show();" oncomplete="PF('dlg').hide();"
+                                 action="#{linkController.analise()}" update="dataTable growl"/>
+
+                <p:dataTable var="link" value="#{linkController.links}" draggableColumns="true" id="dataTable">
+                    <f:facet name="header">
+                        <h:outputText value="Обнаруженные ссылки"/>
+                    </f:facet>
+                    <p:column headerText="№" width="5%">
+                        <h:outputText value="#{link.id}"/>
+                    </p:column>
+
+                    <p:column headerText="Имя ссылки">
+                        <h:outputText value="#{link.name}"/>
+                    </p:column>
+
+                    <p:column headerText="Адресс ссылки">
+                        <p:commandLink action="#{linkController.onLinkClick(link.url)}"
+                                       value="#{link.url}"/>
+                    </p:column>
+
+                </p:dataTable>
+                <p:commandButton value="Очистить" action="#{linkController.clearTable()}" update="dataTable"/>
+
+            </h:panelGrid>
+        </div>
+        <p:dialog widgetVar="dlg" modal="true" closable="true">
+            <div style="overflow:hidden">
+                <div style="white-space:nowrap">
+                    <div class="block">
+                        <img src='https://www.geeksvgs.com/files/2/b2/1544136002.png' height="200px"/>
+                    </div>
+                    <div class="block">
+                        <h1>Идёт обработка...</h1>
+                    </div>
+                </div>
+            </div>
+        </p:dialog>
+
+
+    </h:form>
+</h:body>
+</html>
